@@ -36,7 +36,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
         if (!target || target.length < 3) return;
 
         this.omegga.writeln(
-          `Chat.Command /TP ${interaction.player.name} ${target
+          `Chat.Command /TP "${interaction.player.name}" ${target
             .slice(0, 3)
             .join(" ")} ${target[3] ?? "1"}`
         );
