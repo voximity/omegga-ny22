@@ -2,6 +2,37 @@
   "name": "ny22",
   "description": "A typed safe Omegga plugin.",
   "author": "voximity",
-  "config": {},
+  "config": {
+    "clock-enable": {
+      "description": "Whether or not the clock is enabled.",
+      "type": "boolean",
+      "default": true
+    },
+    "clock-timestamp": {
+      "description": "The timestamp we're counting down to.",
+      "type": "number",
+      "default": 1672549200
+    },
+    "clock-include-days": {
+      "description": "Whether or not to include days.",
+      "type": "boolean",
+      "default": false
+    },
+    "clock-material": {
+      "description": "The material name of the clock bricks.",
+      "type": "string",
+      "default": "BMC_Glow"
+    },
+    "clock-color": {
+      "description": "Comma-separated RGB values for the clock bricks.",
+      "type": "string",
+      "default": "255,255,255"
+    },
+    "tpinteract-enable": {
+      "description": "Whether or not interact TPs are enabled.",
+      "type": "boolean",
+      "default": true
+    }
+  },
   "commands": []
 }
