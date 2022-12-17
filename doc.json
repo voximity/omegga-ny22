@@ -8,6 +8,12 @@
       "type": "boolean",
       "default": true
     },
+    "clock-authorized": {
+      "description": "A list of roles that are authorized to use clock commands.",
+      "type": "list",
+      "itemType": "role",
+      "default": []
+    },
     "clock-timestamp": {
       "description": "The timestamp we're counting down to.",
       "type": "number",

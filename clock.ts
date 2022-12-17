@@ -295,7 +295,13 @@ export const handleCommand =
   (plugin: Plugin) =>
   async (speaker: string, action: string, ...args: string[]) => {
     const player = Omegga.getPlayer(speaker);
-    if (!player.isHost()) return;
+    if (
+      !player.isHost() &&
+      !player
+        .getRoles()
+        .some((r) => (plugin.config['clock-authorized'] ?? []).includes(r))
+    )
+      return;
 
     try {
       if (action === 'setpos') {
