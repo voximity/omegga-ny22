@@ -327,6 +327,9 @@ export const handleCommand =
         await waitForUser(speaker);
 
         const ghost = await player.getGhostBrick();
+        currentClock = '';
+        for (const owner of DIGIT_SAVE.brick_owners)
+          Omegga.clearBricks(owner.id, true);
         await setPos(
           {
             location: ghost.location as Vector,
@@ -381,12 +384,23 @@ const clockUpdate = async (plugin: Plugin) => {
   const ss = t % 60;
   const col = ss % 2 === 0 ? ':' : ';';
 
-  await loadClockString(
-    plugin,
-    (days ? [dd, hh, mm, ss] : [hh, mm, ss])
-      .map((s) => s.toString().padStart(2, '0'))
-      .join(col)
-  );
+  if (t > 0)
+    await loadClockString(
+      plugin,
+      (days ? [dd, hh, mm, ss] : [hh, mm, ss])
+        .map((s) => s.toString().padStart(2, '0'))
+        .join(col)
+    );
+  else {
+    await loadClockString(
+      plugin,
+      Math.round(Date.now() / 1000) % 2 === 0
+        ? (days ? [0, 0, 0, 0] : [0, 0, 0])
+            .map((s) => s.toString().padStart(2, '0'))
+            .join(':')
+        : (days ? ['  ', '  ', '  ', '  '] : ['  ', '  ', '  ']).join(':')
+    );
+  }
 };
 
 export const init = async (plugin: Plugin) => {
