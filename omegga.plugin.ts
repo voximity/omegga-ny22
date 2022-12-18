@@ -3,6 +3,7 @@ import * as clock from './clock';
 
 export type Config = {
   ['clock-enable']: boolean;
+  ['clock-behavior']: 'countdown' | 'countup' | 'time';
   ['clock-authorized']: string[];
   ['clock-timestamp']: number;
   ['clock-include-days']: boolean;

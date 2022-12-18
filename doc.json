@@ -8,6 +8,12 @@
       "type": "boolean",
       "default": true
     },
+    "clock-behavior": {
+      "description": "The clock behavior. Count down, up, or show current time.",
+      "type": "enum",
+      "options": ["countdown", "countup", "time"],
+      "default": "countdown"
+    },
     "clock-authorized": {
       "description": "A list of roles that are authorized to use clock commands.",
       "type": "list",

@@ -86,6 +86,13 @@ for (let i = 0; i < 128; i++) {
   });
 }
 
+COLON_SAVE.bricks.forEach(
+  (b) =>
+    (b.asset_name_index = DIGIT_SAVE.brick_assets.indexOf(
+      COLON_SAVE.brick_assets[b.asset_name_index]
+    ))
+);
+
 const promises: Record<string, (data?: string) => void> = {};
 
 const waitForUser = (user: string) => {
@@ -345,22 +352,38 @@ export const handleCommand =
     }
   };
 
+let startTime = Date.now() / 1000;
+
 const clockUpdate = async (plugin: Plugin) => {
   if (overrideContents) return;
 
-  const diff = Math.round(
-    Math.max(0, plugin.config['clock-timestamp'] - Date.now() / 1000)
-  );
+  const days = plugin.config['clock-include-days'] ?? false;
 
-  const dd = Math.floor((diff / 86400) % 99);
-  const hh = Math.floor((diff / 3600) % 24);
-  const mm = Math.floor((diff / 60) % 60);
-  const ss = diff % 60;
+  let t: number;
+  switch (plugin.config['clock-behavior']) {
+    case 'countdown':
+      t = Math.round(
+        Math.max(0, plugin.config['clock-timestamp'] - Date.now() / 1000)
+      );
+      break;
+    case 'countup':
+      t = Math.round(Math.max(0, Date.now() / 1000 - startTime));
+      break;
+    case 'time':
+    default:
+      t = 0;
+      break;
+  }
+
+  const dd = Math.floor((t / 86400) % 99);
+  const hh = Math.floor((t / 3600) % (days ? 24 : 99));
+  const mm = Math.floor((t / 60) % 60);
+  const ss = t % 60;
   const col = ss % 2 === 0 ? ':' : ';';
 
   await loadClockString(
     plugin,
-    (plugin.config['clock-include-days'] ? [dd, hh, mm, ss] : [hh, mm, ss])
+    (days ? [dd, hh, mm, ss] : [hh, mm, ss])
       .map((s) => s.toString().padStart(2, '0'))
       .join(col)
   );
