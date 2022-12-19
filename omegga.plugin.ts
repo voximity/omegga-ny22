@@ -248,7 +248,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             await this.store.set('locks', this.locks);
 
             this.omegga.whisper(player, `Error message set.`);
-          } else if (action === 'setpos') {
+          } else if (action === 'pos' || action === 'setpos') {
             // remove a lock
             if (!args[0]) {
               this.omegga.whisper(
