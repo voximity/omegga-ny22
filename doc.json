@@ -44,6 +44,12 @@
       "description": "Whether or not interact TPs are enabled.",
       "type": "boolean",
       "default": true
+    },
+    "tpinteract-authorized": {
+      "description": "A list of roles that are authorized to use TP interact commands.",
+      "type": "list",
+      "itemType": "role",
+      "default": []
     }
   },
   "commands": []

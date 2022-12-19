@@ -164,7 +164,14 @@ export const loadClockBricks = async (data: WriteSaveObject) => {
 };
 
 let currentClock = '';
+let currentColonOwners = [];
 const clockAlternator = [];
+
+const clearColons = () => {
+  for (const owner of currentColonOwners) Omegga.clearBricks(owner, true);
+  currentColonOwners = [];
+  currentClock = currentClock.replace(/:/g, ';');
+};
 
 const getAlternator = (n: number) => {
   const a = Number(clockAlternator[n]);
@@ -175,6 +182,8 @@ export const loadClockString = async (plugin: Plugin, str: string) => {
   const bricks = [];
   const off: Vector = [0, 0, 0];
   const deleteOwners = [];
+
+  currentColonOwners = [];
 
   let i = 0;
   for (; i < str.length; i++) {
@@ -199,6 +208,8 @@ export const loadClockString = async (plugin: Plugin, str: string) => {
       off[1] -= 25;
 
       if (!unchanged) {
+        currentColonOwners.push(DIGIT_SAVE.brick_owners[owner].id);
+
         const colon = COLON_SAVE.bricks.map((src) => {
           return {
             ...src,
@@ -382,24 +393,22 @@ const clockUpdate = async (plugin: Plugin) => {
   const hh = Math.floor((t / 3600) % (days ? 24 : 99));
   const mm = Math.floor((t / 60) % 60);
   const ss = t % 60;
-  const col = ss % 2 === 0 ? ':' : ';';
 
-  if (t > 0)
-    await loadClockString(
-      plugin,
-      (days ? [dd, hh, mm, ss] : [hh, mm, ss])
-        .map((s) => s.toString().padStart(2, '0'))
-        .join(col)
-    );
-  else {
-    await loadClockString(
-      plugin,
+  if (t > 0) {
+    const str = (days ? [dd, hh, mm, ss] : [hh, mm, ss])
+      .map((s) => s.toString().padStart(2, '0'))
+      .join(':');
+    await loadClockString(plugin, str);
+
+    setTimeout(clearColons, 500);
+  } else {
+    const str =
       Math.round(Date.now() / 1000) % 2 === 0
         ? (days ? [0, 0, 0, 0] : [0, 0, 0])
             .map((s) => s.toString().padStart(2, '0'))
             .join(':')
-        : (days ? ['  ', '  ', '  ', '  '] : ['  ', '  ', '  ']).join(':')
-    );
+        : (days ? ['  ', '  ', '  ', '  '] : ['  ', '  ', '  ']).join(':');
+    await loadClockString(plugin, str);
   }
 };
 
