@@ -344,6 +344,59 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
           );
           return;
         }
+
+        /* start base4 section */
+
+        const RAND = Math.random();
+        if (interaction.message.startsWith('tellbase:')) {
+          this.omegga.whisper('base4', interaction.message.substring(9));
+        }
+        if (interaction.message.startsWith('seriousbrick')) {
+          this.omegga.writeln(
+            `Chat.Command /KICK "${interaction.player.name}" "Hey, that brick is VERY serious! You can't just go around clicking it as you please!"`
+          );
+        }
+        if (interaction.message.startsWith('killuser')) {
+          this.omegga.writeln('Server.Players.Kill ' + interaction.player.name);
+        }
+        if (interaction.message.startsWith('prankuser')) {
+          this.omegga.writeln('Server.Players.Kill ' + interaction.player.name);
+          this.omegga.broadcast(
+            '<b>' +
+              interaction.player.name +
+              '</b> just fell victim to a little bit of trolling!'
+          );
+        }
+        if (interaction.message.startsWith('killlunapls')) {
+          this.omegga.writeln('Server.Players.Kill eluna');
+          this.omegga.whisper(
+            'eluna',
+            'you have been <i>stopped</i> by <b>' +
+              interaction.player.name +
+              '</b>'
+          );
+        }
+        if (interaction.message.startsWith('killbasepls')) {
+          if (RAND < 1 / 100) {
+            this.omegga.writeln('Server.Players.Kill base4');
+            this.omegga.broadcast(
+              '<i>LUCKY!</i> <b>' +
+                interaction.player.name +
+                '</b> killed <b>base4</b> with the <b><i>funny brick</i></b>!'
+            );
+          } else if (RAND > 92 / 100) {
+            this.omegga.broadcast(
+              '<i>UNLUCKY!</i> The <b><i>funny brick</i></b> retaliates against <b>' +
+                interaction.player.name +
+                '</b>!'
+            );
+            this.omegga.writeln(
+              'Server.Players.Kill ' + interaction.player.name
+            );
+          }
+        }
+
+        /* end base4 section */
       });
 
       registeredCommands.push('tpinteract', 'locks', 'wipekeys');
