@@ -247,7 +247,31 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             lock.error = args.slice(1).join(' ');
             await this.store.set('locks', this.locks);
 
-            this.omegga.whisper(player, `Message set.`);
+            this.omegga.whisper(player, `Error message set.`);
+          } else if (action === 'setpos') {
+            // remove a lock
+            if (!args[0]) {
+              this.omegga.whisper(
+                player,
+                `<color="f00">Please specify the start of a lock name.</>`
+              );
+              return;
+            }
+
+            const [lockId, lock] = this.getLock(args[0]);
+            if (!lock)
+              return this.omegga.whisper(
+                player,
+                `<color="f00">No lock found with that name.</>`
+              );
+
+            lock.position = await player.getPosition();
+            await this.store.set('locks', this.locks);
+
+            this.omegga.whisper(
+              player,
+              `Position set to your current position.`
+            );
           } else if (action === 'key') {
             if (!args[0])
               return this.omegga.whisper(
