@@ -16,7 +16,7 @@ export type Storage = {
   clockPos?: { location: Vector; orientation: string };
   keys?: { [id: string]: Record<string, boolean> };
   locks?: {
-    [uuid: string]: {
+    [name: string]: {
       key: string;
       position: number[];
       message?: string;
@@ -53,11 +53,9 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
     console.log(`Granted key "${key}" to ${player.name}`);
   };
 
-  newLock = async (key: string, position: number[]) => {
-    const id = OMEGGA_UTIL.uuid.random();
-    this.locks[id] = { key, position };
+  newLock = async (name: string, key: string, position: number[]) => {
+    this.locks[name] = { key, position };
     await this.store.set('locks', this.locks);
-    return id;
   };
 
   tpiAuth = (player: OmeggaPlayer) =>
@@ -137,20 +135,27 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
 
           if (action === 'new') {
             // new key
-            if (!args[0]) {
+            if (!args[1]) {
               this.omegga.whisper(
                 player,
-                `<color="f00">Please specify a key name that the lock will be unlocked with.</>`
+                `<color="f00">Please specify a lock name, followed by the key name that the lock will be unlocked with.</>`
               );
               return;
             }
 
             const name = args[0].trim();
+            const key = args[1].trim();
+            if (name in this.locks)
+              return this.omegga.whisper(
+                player,
+                `<color="f00">A lock with that name already exists.</>`
+              );
+
             const pos = (await player.getPosition()).map(Math.round);
-            const id = await this.newLock(name, pos);
+            await this.newLock(name, key, pos);
             this.omegga.whisper(
               player,
-              `Created new lock <code>${name}</>. (<code>${id}</>)`
+              `Created new lock <code>${name}</>. (unlocks with key <code>${key}</>)`
             );
 
             // give player a brick with the component
@@ -168,7 +173,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
                       BCD_Interact: {
                         bPlayInteractSound: true,
                         Message: '',
-                        ConsoleTag: 'tplock:' + id,
+                        ConsoleTag: 'tplock:' + name,
                       },
                     },
                   },
@@ -185,7 +190,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             if (!args[0]) {
               this.omegga.whisper(
                 player,
-                `<color="f00">Please specify the start of a lock ID to remove it.</>`
+                `<color="f00">Please specify the start of a lock name to remove it.</>`
               );
               return;
             }
@@ -194,7 +199,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             if (!lock)
               return this.omegga.whisper(
                 player,
-                `<color="f00">No lock found with that ID.</>`
+                `<color="f00">No lock found with that name.</>`
               );
 
             delete this.locks[lockId];
@@ -206,7 +211,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             if (!args[0]) {
               this.omegga.whisper(
                 player,
-                `<color="f00">Please specify the start of a lock ID.</>`
+                `<color="f00">Please specify the start of a lock name.</>`
               );
               return;
             }
@@ -215,7 +220,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             if (!lock)
               return this.omegga.whisper(
                 player,
-                `<color="f00">No lock found with that ID.</>`
+                `<color="f00">No lock found with that name.</>`
               );
 
             lock.message = args.slice(1).join(' ');
@@ -227,7 +232,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             if (!args[0]) {
               this.omegga.whisper(
                 player,
-                `<color="f00">Please specify the start of a lock ID.</>`
+                `<color="f00">Please specify the start of a lock name.</>`
               );
               return;
             }
@@ -236,7 +241,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
             if (!lock)
               return this.omegga.whisper(
                 player,
-                `<color="f00">No lock found with that ID.</>`
+                `<color="f00">No lock found with that name.</>`
               );
 
             lock.error = args.slice(1).join(' ');
@@ -279,7 +284,7 @@ export default class Plugin implements OmeggaPlugin<Config, Storage> {
               const lock = this.locks[id];
               this.omegga.whisper(
                 player,
-                `- Unlocked by key <code>${lock.key}</> (${id})`
+                `<code>${id}</> (unlocked by key <code>${lock.key}</>)`
               );
             }
           }
