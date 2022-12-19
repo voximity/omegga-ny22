@@ -390,7 +390,10 @@ const clockUpdate = async (plugin: Plugin) => {
   }
 
   const dd = Math.floor((t / 86400) % 99);
-  const hh = Math.floor((t / 3600) % (days ? 24 : 99));
+  const hh = Math.floor(
+    (t / 3600) %
+      (days || plugin.config['clock-behavior'] === 'countdown' ? 24 : 99)
+  );
   const mm = Math.floor((t / 60) % 60);
   const ss = t % 60;
 
