@@ -9,6 +9,8 @@ export type Config = {
   ['clock-include-days']: boolean;
   ['clock-material']: string;
   ['clock-color']: string;
+  ['clock-colon-blink']: boolean;
+  ['clock-update-seconds']: number;
   ['tpinteract-enable']: boolean;
   ['tpinteract-authorized']: string[];
 };

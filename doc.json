@@ -40,6 +40,16 @@
       "type": "string",
       "default": "255,255,255"
     },
+    "clock-colon-blink": {
+      "description": "Whether or not the colons should blink.",
+      "type": "boolean",
+      "default": true
+    },
+    "clock-update-seconds": {
+      "description": "The amount of time to wait between clock updates, in seconds.",
+      "type": "number",
+      "default": 1
+    },
     "tpinteract-enable": {
       "description": "Whether or not interact TPs are enabled.",
       "type": "boolean",

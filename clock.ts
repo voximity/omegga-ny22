@@ -403,7 +403,7 @@ const clockUpdate = async (plugin: Plugin) => {
       .join(':');
     await loadClockString(plugin, str);
 
-    setTimeout(clearColons, 500);
+    if (plugin.config['clock-colon-blink']) setTimeout(clearColons, 500);
   } else {
     const str =
       Math.round(Date.now() / 1000) % 2 === 0
@@ -422,6 +422,9 @@ export const init = async (plugin: Plugin) => {
   const pos = await plugin.store.get('clockPos');
   if (pos) {
     clockPos = pos;
-    setInterval(() => clockUpdate(plugin), 1000);
+    setInterval(
+      () => clockUpdate(plugin),
+      (plugin.config['clock-update-seconds'] ?? 1) * 1000
+    );
   }
 };
